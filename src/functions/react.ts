@@ -7,6 +7,8 @@ export const react = async (
   openai: OpenAIApi,
   note: Note
 ): Promise<string> => {
+  const ignoreEmojis = ["👀", "🤔"];
+
   const response = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
@@ -28,7 +30,9 @@ export const react = async (
   )
     return "NG";
 
-  if (response.data.choices[0].message.content !== "👀") {
+  const emoji = response.data.choices[0].message.content;
+
+  if (!ignoreEmojis.includes(emoji)) {
     cli.request("notes/reactions/create", {
       noteId: note.id,
       reaction: response.data.choices[0].message?.content,
