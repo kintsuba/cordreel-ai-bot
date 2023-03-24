@@ -7,7 +7,7 @@ export const react = async (
   openai: OpenAIApi,
   note: Note
 ): Promise<string> => {
-  const ignoreEmojis = ["👀", "🤔"];
+  const ignoreEmojis = ["👀", "🤔", "🤷‍♂️", "🤷‍♀️"];
 
   const response = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
