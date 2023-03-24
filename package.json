@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "ts-node src/app.ts",
     "start": "node build/app.js",
-    "compile": "tsc -p ."
+    "build": "tsc -p ."
   },
   "dependencies": {
     "dotenv": "^16.0.3",

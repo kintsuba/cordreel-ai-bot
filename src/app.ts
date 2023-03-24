@@ -36,7 +36,7 @@ const main = async () => {
     WebSocket
   );
 
-  const LtlChannel = stream.useChannel("hybridTimeline");
+  const LtlChannel = stream.useChannel("localTimeline");
   LtlChannel.on("note", async (note) => {
     const result = await react(cli, openai, note);
   });
