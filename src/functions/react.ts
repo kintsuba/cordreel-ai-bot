@@ -28,10 +28,12 @@ export const react = async (
   )
     return "NG";
 
-  cli.request("notes/reactions/create", {
-    noteId: note.id,
-    reaction: response.data.choices[0].message?.content,
-  });
+  if (response.data.choices[0].message.content !== "👀") {
+    cli.request("notes/reactions/create", {
+      noteId: note.id,
+      reaction: response.data.choices[0].message?.content,
+    });
+  }
 
   return "OK";
 };
