@@ -2,7 +2,7 @@ import * as Misskey from "misskey-js";
 import WebSocket from "ws";
 import { Configuration, OpenAIApi } from "openai";
 import * as dotenv from "dotenv";
-import { react } from "./functions";
+import { react, scoreSenryu } from "./functions";
 
 dotenv.config();
 
@@ -38,7 +38,23 @@ const main = async () => {
 
   const LtlChannel = stream.useChannel("localTimeline");
   LtlChannel.on("note", async (note) => {
-    const result = await react(cli, openai, note);
+    if (!note.text) return;
+
+    if (/#今日の一句/.test(note.text)) {
+      const result = await scoreSenryu(cli, openai, note).catch((error) =>
+        console.error(error)
+      );
+      if (result !== "OK") {
+        console.error(result);
+        process.exit(1);
+      }
+    } else {
+      const result = await react(cli, openai, note);
+      if (result !== "OK") {
+        console.error(result);
+        process.exit(1);
+      }
+    }
   });
 };
 
