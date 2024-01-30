@@ -63,9 +63,6 @@ const main = async () => {
       }
     }
   });
-
-  const mainChannel = stream.useChannel("main");
-  mainChannel.on("notification", async (note) => {});
 };
 
 main();
