@@ -1,6 +1,6 @@
 import * as Misskey from "misskey-js";
 import WebSocket from "ws";
-import { Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
 import * as dotenv from "dotenv";
 import { react, scoreSenryu } from "./functions";
 
@@ -18,10 +18,9 @@ const main = async () => {
     process.exit(1);
   }
 
-  const configuration = new Configuration({
+  const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   });
-  const openai = new OpenAIApi(configuration);
 
   const cli = new Misskey.api.APIClient({
     origin: process.env.MISSKEY_HOST,

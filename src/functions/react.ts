@@ -1,15 +1,15 @@
 import { APIClient } from "misskey-js/built/api";
 import { Note } from "misskey-js/built/entities";
-import { OpenAIApi } from "openai";
+import OpenAI from "openai";
 
 export const react = async (
   cli: APIClient,
-  openai: OpenAIApi,
+  openai: OpenAI,
   note: Note
 ): Promise<string> => {
   const ignoreEmojis = ["👀", "🤔", "🤷‍♂️", "🤷‍♀️"];
 
-  const response = await openai.createChatCompletion({
+  const response = await openai.chat.completions.create({
     model: "gpt-4",
     messages: [
       {
@@ -24,18 +24,14 @@ export const react = async (
     ],
   });
 
-  if (
-    response.statusText !== "OK" ||
-    !response.data.choices[0].message?.content
-  )
-    return "NG";
+  if (!response || !response.choices[0].message?.content) return "NG";
 
-  const emoji = response.data.choices[0].message.content;
+  const emoji = response.choices[0].message.content;
 
   if (!ignoreEmojis.includes(emoji)) {
     cli.request("notes/reactions/create", {
       noteId: note.id,
-      reaction: response.data.choices[0].message?.content,
+      reaction: response.choices[0].message?.content,
     });
   }
 

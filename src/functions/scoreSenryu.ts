@@ -1,15 +1,15 @@
 import { APIClient } from "misskey-js/built/api";
 import { Note } from "misskey-js/built/entities";
-import { OpenAIApi } from "openai";
+import OpenAI from "openai";
 
 export const scoreSenryu = async (
   cli: APIClient,
-  openai: OpenAIApi,
+  openai: OpenAI,
   note: Note
 ): Promise<string> => {
   if (!note.text) return "NG";
 
-  const response = await openai.createChatCompletion({
+  const response = await openai.chat.completions.create({
     model: "gpt-4",
     messages: [
       {
@@ -42,13 +42,9 @@ In addition, input and output must be in Japanese.
     ],
   });
 
-  if (
-    response.statusText !== "OK" ||
-    !response.data.choices[0].message?.content
-  )
-    return "NG";
+  if (!response || !response.choices[0].message?.content) return "NG";
 
-  const content = response.data.choices[0].message.content;
+  const content = response.choices[0].message.content;
 
   cli.request("notes/create", {
     replyId: note.id,
