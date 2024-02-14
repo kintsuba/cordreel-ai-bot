@@ -118,5 +118,7 @@ export const closeQuiz = async (cli: APIClient, noteId: string) => {
     visibility: "public",
   });
 
+  quizzes.delete(noteId);
+
   return "OK";
 };
