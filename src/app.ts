@@ -56,10 +56,14 @@ const main = async () => {
         process.exit(1);
       }
     } else {
-      const result = await react(cli, openai, note);
-      if (result !== "OK") {
-        console.error(result);
-        process.exit(1);
+      const user = note.user as any;
+
+      if (!user.isBot) {
+        const result = await react(cli, openai, note);
+        if (result !== "OK") {
+          console.error(result);
+          process.exit(1);
+        }
       }
     }
   });
