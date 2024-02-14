@@ -2,7 +2,7 @@ import * as Misskey from "misskey-js";
 import WebSocket from "ws";
 import OpenAI from "openai";
 import * as dotenv from "dotenv";
-import { react, scoreSenryu, quiz } from "./functions";
+import { react, scoreSenryu, question, answer, closeQuiz } from "./functions";
 
 dotenv.config();
 
@@ -48,7 +48,7 @@ const main = async () => {
         process.exit(1);
       }
     } else if (/クイズ|くいず|quiz/.test(note.text)) {
-      const result = await quiz(cli, openai, note).catch((error) =>
+      const result = await question(cli, openai, note).catch((error) =>
         console.error(error)
       );
       if (result !== "OK") {
@@ -65,7 +65,24 @@ const main = async () => {
   });
 
   const mainChannel = stream.useChannel("main");
-  mainChannel.on("notification", async (note) => {});
+  mainChannel.on("notification", async (notification) => {
+    const n = notification as any;
+    if (n.type === "poll_vote") {
+      const result = await answer(cli, n.user, n.note, n.choice);
+
+      if (result !== "OK") {
+        console.error(result);
+        process.exit(1);
+      }
+    } else if (n.type === "poll_finished") {
+      const result = await closeQuiz(cli, n.noteId);
+
+      if (result !== "OK") {
+        console.error(result);
+        process.exit(1);
+      }
+    }
+  });
 };
 
 main();
