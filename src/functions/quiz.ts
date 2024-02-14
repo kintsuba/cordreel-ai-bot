@@ -42,7 +42,6 @@ export const question = async (
       replyId: note.id,
       text: "失敗しちゃったみたい。もう一度試してみてね",
       visibility: "public",
-      localOnly: true,
     });
   };
 
@@ -69,7 +68,6 @@ export const question = async (
     replyId: note.id,
     text: quiz.question,
     visibility: "public",
-    localOnly: true,
     poll: {
       choices: quiz.options,
       expiredAfter: 300000,
@@ -118,7 +116,6 @@ export const closeQuiz = async (cli: APIClient, noteId: string) => {
     replyId: noteId,
     text: "正解者はこちら！\n" + quiz?.correctUserNames.join("\n"),
     visibility: "public",
-    localOnly: true,
   });
 
   return "OK";

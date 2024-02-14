@@ -35,7 +35,7 @@ const main = async () => {
     WebSocket
   );
 
-  const ltlChannel = stream.useChannel("localTimeline");
+  const ltlChannel = stream.useChannel("hybridTimeline");
   ltlChannel.on("note", async (note) => {
     if (!note.text) return;
 
