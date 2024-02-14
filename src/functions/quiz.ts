@@ -1,15 +1,18 @@
 import { APIClient } from "misskey-js/built/api";
-import { Note } from "misskey-js/built/entities";
+import { Note, User } from "misskey-js/built/entities";
+import { acct } from "../util";
 import OpenAI from "openai";
-import { getSystemErrorMap } from "util";
 
 interface Quiz {
   question: string;
   options: string[];
   answerIndex: number;
+  correctUserNames: string[];
 }
 
-export const quiz = async (
+const quizzes = new Map<string, Quiz>();
+
+export const question = async (
   cli: APIClient,
   openai: OpenAI,
   note: Note
@@ -25,7 +28,7 @@ export const quiz = async (
       {
         role: "system",
         content:
-          'あなたは優秀なアシスタントです。あなたはあらゆるジャンルのクイズを作ることが出来ます。日本語で回答してください。{"question": "問題", "options":["回答1", "回答2", "回答3", "回答4"], "answerIndex": 0}のJSON形式で返却してください。',
+          'あなたは優秀なアシスタントです。あなたはあらゆるジャンルのクイズを作ることが出来ます。日本語で回答してください。{"question": "問題", "options":["回答1", "回答2", "回答3", "回答4"], "answerIndex": 0, correctUserNames: []}のJSON形式で返却してください。',
       },
       {
         role: "user",
@@ -39,7 +42,6 @@ export const quiz = async (
       replyId: note.id,
       text: "失敗しちゃったみたい。もう一度試してみてね",
       visibility: "public",
-      localOnly: true,
     });
   };
 
@@ -66,22 +68,57 @@ export const quiz = async (
     replyId: note.id,
     text: quiz.question,
     visibility: "public",
-    localOnly: true,
     poll: {
       choices: quiz.options,
       expiredAfter: 300000,
     },
   });
 
-  setTimeout(() => {
-    const nowNote = cli.request("notes/show", { noteId: createdNote.id });
-    cli.request("notes/create", {
-      replyId: createdNote.id,
-      text: `正解は**${quiz?.options[quiz.answerIndex]}**でした！`,
-      visibility: "public",
-      localOnly: true,
+  quizzes.set(createdNote.id, quiz);
+
+  return "OK";
+};
+
+export const answer = async (
+  cli: APIClient,
+  user: User,
+  note: Note,
+  choice: number
+) => {
+  const quiz = quizzes.get(note.id);
+
+  if (choice === quiz?.answerIndex) {
+    await cli.request("notes/create", {
+      replyId: note.id,
+      text: `正解！`,
+      visibility: "specified",
+      visibleUserIds: [user.id],
     });
-  }, 300000);
+
+    quiz.correctUserNames.push(acct(user));
+
+    return "OK";
+  } else {
+    await cli.request("notes/create", {
+      replyId: note.id,
+      text: `残念、正解は**${quiz?.options[quiz.answerIndex]}**でした！`,
+      visibility: "specified",
+      visibleUserIds: [user.id],
+    });
+
+    return "OK";
+  }
+};
+
+export const closeQuiz = async (cli: APIClient, noteId: string) => {
+  const quiz = quizzes.get(noteId);
+  await cli.request("notes/create", {
+    replyId: noteId,
+    text: "正解者はこちら！\n" + quiz?.correctUserNames.join("\n"),
+    visibility: "public",
+  });
+
+  quizzes.delete(noteId);
 
   return "OK";
 };
