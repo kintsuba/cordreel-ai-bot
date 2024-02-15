@@ -70,7 +70,7 @@ export const question = async (
     visibility: "public",
     poll: {
       choices: quiz.options,
-      expiredAfter: 300000,
+      expiredAfter: 3600000,
     },
   });
 
