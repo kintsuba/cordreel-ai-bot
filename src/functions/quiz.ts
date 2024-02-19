@@ -65,7 +65,7 @@ export const question = async (
   }
 
   const { createdNote } = await cli.request("notes/create", {
-    replyId: note.id,
+    renoteId: note.id,
     text: quiz.question,
     visibility: "public",
     poll: {
