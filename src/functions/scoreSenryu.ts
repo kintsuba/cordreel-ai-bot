@@ -10,7 +10,7 @@ export const scoreSenryu = async (
   if (!note.text) return "NG";
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4",
+    model: "gpt-4-turbo-preview",
     messages: [
       {
         role: "user",

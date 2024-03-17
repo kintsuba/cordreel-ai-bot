@@ -23,7 +23,7 @@ export const question = async (
   const genre = matched ? `「${matched[1]} 」ジャンルの` : "ノンジャンル";
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4",
+    model: "gpt-4-turbo-preview",
     messages: [
       {
         role: "system",
