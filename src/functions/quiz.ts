@@ -24,11 +24,12 @@ export const question = async (
 
   const response = await openai.chat.completions.create({
     model: "gpt-4-turbo-preview",
+    response_format: { type: "json_object" },
     messages: [
       {
         role: "system",
         content:
-          'あなたは優秀なアシスタントです。あなたはあらゆるジャンルのクイズを作ることが出来ます。日本語で回答してください。{"question": "問題", "options":["回答1", "回答2", "回答3", "回答4"], "answerIndex": 0, correctUserNames: []}のJSON形式で返却してください。マークダウンの装飾は不要です。',
+          'あなたは優秀なアシスタントです。あなたはあらゆるジャンルのクイズを作ることが出来ます。日本語で回答してください。必ず {"question": "問題", "options":["回答1", "回答2", "回答3", "回答4"], "answerIndex": 0, correctUserNames: []} のJSON形式で返却してください。',
       },
       {
         role: "user",
