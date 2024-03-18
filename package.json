@@ -10,15 +10,15 @@
     "build": "tsc -p ."
   },
   "dependencies": {
-    "dotenv": "^16.4.1",
+    "dotenv": "^16.4.5",
     "misskey-js": "0.0.15",
-    "openai": "^4.26.0",
+    "openai": "^4.29.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3",
+    "typescript": "^5.4.2",
     "ws": "^8.16.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.10",
+    "@types/node": "^20.11.29",
     "@types/ws": "^8.5.10",
     "prettier": "^3.2.4"
   }
