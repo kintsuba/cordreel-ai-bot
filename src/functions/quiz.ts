@@ -88,6 +88,8 @@ export const answer = async (
 ) => {
   const quiz = quizzes.get(note.id);
 
+  if (!quiz) return "NG";
+
   if (choice === quiz?.answerIndex) {
     await cli.request("notes/create", {
       replyId: note.id,
@@ -113,25 +115,26 @@ export const answer = async (
 
 export const closeQuiz = async (cli: APIClient, noteId: string) => {
   const quiz = quizzes.get(noteId);
-  if (quiz?.options) {
-    if (quiz?.correctUserNames.length !== 0) {
-      await cli.request("notes/create", {
-        replyId: noteId,
-        text:
-          `正解は**${quiz?.options[quiz.answerIndex]}**` +
-          "でした！\n正解者はこちら！\n" +
-          quiz?.correctUserNames.join("\n"),
-        visibility: "public",
-      });
-    } else {
-      await cli.request("notes/create", {
-        replyId: noteId,
-        text:
-          "残念、正解者はいませんでした……。\n" +
-          `正解は**${quiz?.options[quiz.answerIndex]}**でした！`,
-        visibility: "public",
-      });
-    }
+
+  if (!quiz) return "NG";
+
+  if (quiz?.correctUserNames.length !== 0) {
+    await cli.request("notes/create", {
+      replyId: noteId,
+      text:
+        `正解は**${quiz?.options[quiz.answerIndex]}**` +
+        "でした！\n正解者はこちら！\n" +
+        quiz?.correctUserNames.join("\n"),
+      visibility: "public",
+    });
+  } else {
+    await cli.request("notes/create", {
+      replyId: noteId,
+      text:
+        "残念、正解者はいませんでした……。\n" +
+        `正解は**${quiz?.options[quiz.answerIndex]}**でした！`,
+      visibility: "public",
+    });
   }
 
   quizzes.delete(noteId);
