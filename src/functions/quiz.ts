@@ -23,7 +23,7 @@ export const question = async (
   const genre = matched ? `「${matched[1]} 」ジャンルの` : "ノンジャンル";
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4o",
+    model: "gpt-5",
     response_format: { type: "json_object" },
     messages: [
       {
@@ -69,10 +69,7 @@ export const question = async (
     renoteId: note.id,
     text: quiz.question,
     visibility: "public",
-    poll: {
-      choices: quiz.options,
-      expiredAfter: 3600000,
-    },
+    poll: { choices: quiz.options, expiredAfter: 3600000 },
   });
 
   quizzes.set(createdNote.id, quiz);
