@@ -15,7 +15,7 @@ const quizzes = new Map<string, Quiz>();
 export const question = async (
   cli: APIClient,
   openai: OpenAI,
-  note: Note
+  note: Note,
 ): Promise<string> => {
   if (!note.text) return "NG";
 
@@ -23,13 +23,14 @@ export const question = async (
   const genre = matched ? `「${matched[1]} 」ジャンルの` : "ノンジャンル";
 
   const response = await openai.chat.completions.create({
-    model: "gpt-5",
+    model: "gpt-5.2",
+    reasoning_effort: "medium",
     response_format: { type: "json_object" },
     messages: [
       {
         role: "system",
         content:
-          'あなたは優秀なアシスタントです。あなたはあらゆるジャンルのクイズを作ることが出来ます。日本語で回答してください。必ず {"question": "問題", "options":["回答1", "回答2", "回答3", "回答4"], "answerIndex": 0, correctUserNames: []} のJSON形式で返却してください。また、クイズは正答率が25%程度になるような難しい問題である必要があります。',
+          'あなたにはSNSを盛り上げるためのクイズを作成してもらいます。日本語で回答してください。必ず {"question": "問題", "options":["回答1", "回答2", "回答3", "回答4"], "answerIndex": 0, correctUserNames: []} のJSON形式で返却してください。また、クイズは正答率が25%程度になるような難しい問題である必要があります。',
       },
       {
         role: "user",
@@ -81,7 +82,7 @@ export const answer = async (
   cli: APIClient,
   user: User,
   note: Note,
-  choice: number
+  choice: number,
 ) => {
   const quiz = quizzes.get(note.id);
 

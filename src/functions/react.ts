@@ -5,12 +5,12 @@ import OpenAI from "openai";
 export const react = async (
   cli: APIClient,
   openai: OpenAI,
-  note: Note
+  note: Note,
 ): Promise<string> => {
   const ignoreEmojis = ["👀", "🤔", "🤷‍♂️", "🤷‍♀️"];
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-5-nano",
     messages: [
       {
         role: "user",

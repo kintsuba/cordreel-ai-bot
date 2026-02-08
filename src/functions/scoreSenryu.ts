@@ -5,12 +5,13 @@ import OpenAI from "openai";
 export const scoreSenryu = async (
   cli: APIClient,
   openai: OpenAI,
-  note: Note
+  note: Note,
 ): Promise<string> => {
   if (!note.text) return "NG";
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4o",
+    model: "gpt-5.2",
+    reasoning_effort: "xhigh",
     messages: [
       {
         role: "user",
